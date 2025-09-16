@@ -9,6 +9,46 @@ pub fn main() {
 }
 
 #[wasm_bindgen]
+struct WgpuDetector {
+    // Placeholder for future detector properties
+}
+
+#[wasm_bindgen]
+impl WgpuDetector {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WgpuDetector {
+        console::log_1(&"WgpuDetector initialized".into());
+        WgpuDetector {}
+    }
+
+    // ...existing code...
+    pub fn detect(&self) -> bool {
+        // Try to detect the GPU using the browser's navigator.gpu API
+        console::log_1(&"Detecting WebGPU support...".into());
+
+        let window = web_sys::window();
+        if window.is_none() {
+            console::log_1(&"No global window exists.".into());
+            return false;
+        }
+        let navigator = window.unwrap().navigator();
+
+        // Check if the GPU API is available
+        let gpu = js_sys::Reflect::get(&navigator, &JsValue::from_str("gpu"));
+        match gpu {
+            Ok(gpu_val) if !gpu_val.is_undefined() && !gpu_val.is_null() => {
+                console::log_1(&"WebGPU API detected!".into());
+                true
+            }
+            _ => {
+                console::log_1(&"WebGPU API not available.".into());
+                false
+            }
+        }
+    }
+}
+
+#[wasm_bindgen]
 pub struct WgpuRenderer {
     canvas: web_sys::HtmlCanvasElement,
     rotation: f32,
